@@ -14,7 +14,8 @@ initializeEnvironment <- function() {
     ##
     falseFormula <- 1
     falseData    <- as.matrix(iris)
-    falseGroup   <- 1:4
+    falseGroup1  <- matrix()
+    falseGroup2   <- 1:4
     ## 
     modFrame <- stats::model.frame(trueFormula, trueData)
     ##

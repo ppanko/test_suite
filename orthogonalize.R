@@ -8,14 +8,17 @@ initializeEnvironment <- function() {
     ## 
     data(iris)
     ##
-    trueFormula <<- "Petal.Width ~ Sepal.Width"
-    trueData    <<- iris
-    trueGroup   <<- iris$Species
+    trueFormula   <<- "Petal.Width ~ Sepal.Width"
+    trueData      <<- iris
+    trueGroupVec  <<- iris$Species
+    trueGroupName <<- "Species"
+    trueIntercept <<- TRUE
     ##
-    falseFormula <<- 1
-    falseData    <<- as.matrix(iris)
-    falseGroup1  <<- matrix()
-    falseGroup2  <<- 1:4
+    falseFormula   <<- 1
+    falseData      <<- as.matrix(iris)
+    falseGroup1    <<- data.frame()
+    falseGroup2    <<- 1:4
+    falseIntercept <<- "true"
     ## 
     modFrame <<- stats::model.frame(trueFormula, trueData)
     ##
@@ -49,6 +52,10 @@ checkCatchableErrors <- function() {
                 orthogonalize(formula = trueFormula, data = trueData, group = falseGroup2),
                 "group must be a vector containing the grouping variable or the name of a single grouping variable in the data"
             )
+            expect_error(
+                orthogonalize(formula = trueFormula, data = trueData, intercept = falseIntercept),
+                "intercept argument must be TRUE or FALSE"
+            )
         }
     )
 }
@@ -65,16 +72,24 @@ checkFrontEnd <- function() {
                 orthogonalize(formula = trueFormula, data = trueData)
             )
             expect_equal(
-                lmResid(formula = trueFormula, data = trueData, intercept = TRUE),
-                orthogonalize(formula = trueFormula, data = trueData, intercept = TRUE)
+                lmResid(formula = trueFormula, data = trueData, intercept = trueIntercept),
+                orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept)
             )
             expect_equal(
-                lmGroupResid(formula = trueFormula, data = trueData, group = trueGroup),
-                orthogonalize(formula = trueFormula, data = trueData, group = trueGroup)
+                lmGroupResid(formula = trueFormula, data = trueData, group = trueGroupVec),
+                orthogonalize(formula = trueFormula, data = trueData, group = trueGroupVec)
             )
             expect_equal(
-                lmGroupResid(formula = trueFormula, data = trueData, group = trueGroup, intercept = TRUE),
-                orthogonalize(formula = trueFormula, data = trueData, group = trueGroup, intercept = TRUE)
+                lmGroupResid(formula = trueFormula, data = trueData, group = trueGroupVec, intercept = trueIntercept),
+                orthogonalize(formula = trueFormula, data = trueData, group = trueGroupVec, intercept = trueIntercept)
+            )
+            expect_equal(
+                lmGroupResid(formula = trueFormula, data = trueData, group = trueGroupVec),
+                orthogonalize(formula = trueFormula, data = trueData, group = trueGroupName)
+            )
+            expect_equal(
+                lmGroupResid(formula = trueFormula, data = trueData, group = trueGroupVec, intercept = trueIntercept),
+                orthogonalize(formula = trueFormula, data = trueData, group = trueGroupName, intercept = trueIntercept)
             )
         }
     )   
@@ -91,16 +106,16 @@ checkBackEnd <- function() {
                 get_residuals(X = X, y = y, intercept = 0)
             )
             expect_equal(
-                as.matrix(lmResid(x = X, y = y, intercept = TRUE, bare = TRUE)),
+                as.matrix(lmResid(x = X, y = y, intercept = trueIntercept, bare = TRUE)),
                 get_residuals(X = X, y = y, intercept = 1)
             )
             expect_equal(
-                as.matrix(lmGroupResid(x = X, y = y, group = trueGroup, bare = TRUE)),
-                get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroup), intercept = 0)
+                as.matrix(lmGroupResid(x = X, y = y, group = trueGroupVec, bare = TRUE)),
+                get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 0)
             )
             expect_equal(
-                as.matrix(lmGroupResid(x = X, y = y, group = trueGroup, bare = TRUE, intercept = TRUE)),
-                get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroup), intercept = 1)
+                as.matrix(lmGroupResid(x = X, y = y, group = trueGroup, intercept = trueIntercept, bare = TRUE)),
+                get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 1)
             )
         }
     )

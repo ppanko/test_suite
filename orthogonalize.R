@@ -21,30 +21,6 @@ initializeEnvironment <- function() {
     ##
     y <<- model.response(modFrame, "numeric")
     X <<- model.matrix(attr(modFrame, "terms"), modFrame)
-    ##
-    lmGroupResid <<- function(..., group, bare = FALSE, intercept = FALSE) {
-        groupResidVec <- vector("numeric", length = length(group))
-        unqGroups <- unique(group)
-        for(g in unqGroups) {
-            selectedRows <- group == g
-            if(bare == FALSE) {
-                groupResidVec[selectedRows] <- lmResid(formula = formula, data = data[selectedRows,], intercept = intercept)
-            } else {
-                groupResidVec[selectedRows] <- lmResid(x = X[selectedRows,], y = y[selectedRows], intercept = intercept, bare = TRUE)
-            }
-        }
-        return(groupResidVec)
-    }
-    ##
-    lmResid <<- function(..., intercept = FALSE, bare = FALSE) {
-        if(bare == TRUE) {
-            model <- lm.fit(...)
-        } else {
-            model <- lm(...)
-        }
-        resid <- as.vector(model$resid) + (model$coef[[1]] * intercept)
-        return(resid)
-    }
 }
 
 ##
@@ -129,3 +105,35 @@ checkBackEnd <- function() {
         }
     )
 }
+
+##
+lmGroupResid <- function(..., group, bare = FALSE, intercept = FALSE) {
+    groupResidVec <- vector("numeric", length = length(group))
+    unqGroups <- unique(group)
+    for(g in unqGroups) {
+        selectedRows <- group == g
+        if(bare == FALSE) {
+            groupResidVec[selectedRows] <- lmResid(formula = formula, data = data[selectedRows,], intercept = intercept)
+        } else {
+            groupResidVec[selectedRows] <- lmResid(x = X[selectedRows,], y = y[selectedRows], intercept = intercept, bare = TRUE)
+        }
+    }
+    return(groupResidVec)
+}
+
+##
+lmResid <- function(..., intercept = FALSE, bare = FALSE) {
+    if(bare == TRUE) {
+        model <- lm.fit(...)
+    } else {
+        model <- lm(...)
+    }
+    resid <- as.vector(model$resid) + (model$coef[[1]] * intercept)
+    return(resid)
+}
+
+## 
+url <- "https://raw.githubusercontent.com/ppanko/orthogonalize/master/src/get_residuals.cpp"
+tf <- tempfile(fileext = ".cpp")
+download.file(url, tf, quiet = TRUE)
+sourceCpp(tf)

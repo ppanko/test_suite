@@ -114,7 +114,7 @@ checkBackEnd <- function() {
                 get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 0)
             )
             expect_equal(
-                as.matrix(lmGroupResid(x = X, y = y, group = trueGroup, intercept = trueIntercept, bare = TRUE)),
+                as.matrix(lmGroupResid(x = X, y = y, group = trueGroupVec, intercept = trueIntercept, bare = TRUE)),
                 get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 1)
             )
         }

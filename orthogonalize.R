@@ -107,7 +107,8 @@ checkBackEnd <- function() {
 }
 
 ##
-lmGroupResid <- function(..., group, bare = FALSE, intercept = FALSE) {
+lmGroupResid <- function(..., group, intercept = FALSE, bare = FALSE) {
+    list2env(list(...), environment())
     groupResidVec <- vector("numeric", length = length(group))
     unqGroups <- unique(group)
     for(g in unqGroups) {

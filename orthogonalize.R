@@ -8,21 +8,21 @@ initializeEnvironment <- function() {
     ## 
     data(iris)
     ##
-    trueFormula <- "Petal.Width ~ Sepal.Width"
-    trueData    <- iris
-    trueGroup   <- iris$Species
+    trueFormula <<- "Petal.Width ~ Sepal.Width"
+    trueData    <<- iris
+    trueGroup   <<- iris$Species
     ##
-    falseFormula <- 1
-    falseData    <- as.matrix(iris)
-    falseGroup1  <- matrix()
-    falseGroup2   <- 1:4
+    falseFormula <<- 1
+    falseData    <<- as.matrix(iris)
+    falseGroup1  <<- matrix()
+    falseGroup2  <<- 1:4
     ## 
-    modFrame <- stats::model.frame(trueFormula, trueData)
+    modFrame <<- stats::model.frame(trueFormula, trueData)
     ##
-    y <- model.response(modFrame, "numeric")
-    X <- model.matrix(attr(modFrame, "terms"), modFrame)
+    y <<- model.response(modFrame, "numeric")
+    X <<- model.matrix(attr(modFrame, "terms"), modFrame)
     ##
-    lmGroupResid <- function(..., group, bare = FALSE, intercept = FALSE) {
+    lmGroupResid <<- function(..., group, bare = FALSE, intercept = FALSE) {
         groupResidVec <- vector("numeric", length = length(group))
         unqGroups <- unique(group)
         for(g in unqGroups) {
@@ -36,7 +36,7 @@ initializeEnvironment <- function() {
         return(groupResidVec)
     }
     ##
-    lmResid <- function(..., intercept = FALSE, bare = FALSE) {
+    lmResid <<- function(..., intercept = FALSE, bare = FALSE) {
         if(bare == TRUE) {
             model <- lm.fit(...)
         } else {

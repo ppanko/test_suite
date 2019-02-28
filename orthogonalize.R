@@ -52,6 +52,7 @@ checkCatchableErrors <- function() {
                 orthogonalize(formula = trueFormula, data = trueData, group = falseGroup2),
                 "group must be a vector containing the grouping variable or the name of a single grouping variable in the data"
             )
+            ## The value of "intercept" is not of class "logical"
             expect_error(
                 orthogonalize(formula = trueFormula, data = trueData, intercept = falseIntercept),
                 "intercept argument must be TRUE or FALSE"
@@ -121,17 +122,91 @@ checkBackEnd <- function() {
     )
 }
 
+
+##
+sanityCheck <- function() {
+    ##
+    test_that(
+        "Things make sense",
+        {
+            expect_that(
+                orthogonalize(formula = trueFormula, data = trueData),
+                is_a("numeric")
+            )
+            expect_that(
+                orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept),
+                is_a("numeric")
+            )
+            expect_that(
+                orthogonalize(formula = trueFormula, data = trueData, group = trueGroupVec),
+                is_a("numeric")
+            )
+            expect_that(
+                orthogonalize(formula = trueFormula, data = trueData, group = trueGroupName),
+                is_a("numeric")
+            )
+            expect_that(
+                orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept, group = trueGroupVec),
+                is_a("numeric")
+            )
+            expect_that(
+                orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept, group = trueGroupName),
+                is_a("numeric")
+            )
+            expect_equal(
+                length(orthogonalize(formula = trueFormula, data = trueData)),
+                nrow(trueData)
+            )
+            expect_equal(
+                length(orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept)),
+                nrow(trueData)
+            )
+            expect_equal(
+                length(orthogonalize(formula = trueFormula, data = trueData, group = trueGroupVec)),
+                nrow(trueData)
+            )
+            expect_equal(
+                length(orthogonalize(formula = trueFormula, data = trueData, group = trueGroupName)),
+                nrow(trueData)
+            )
+            expect_equal(
+                length(orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept, group = trueGroupVec)),
+                nrow(trueData)
+            )
+            expect_equal(
+                length(orthogonalize(formula = trueFormula, data = trueData, intercept = trueIntercept, group = trueGroupName)),
+                nrow(trueData)
+            )
+        }
+    )
+}
+
+
 ##
 lmGroupResid <- function(..., group, intercept = FALSE, bare = FALSE) {
+    ##
     list2env(list(...), environment())
+    ##
     groupResidVec <- vector("numeric", length = length(group))
-    unqGroups <- unique(group)
+    unqGroups     <- unique(group)
+    ##
     for(g in unqGroups) {
         selectedRows <- group == g
         if(bare == FALSE) {
-            groupResidVec[selectedRows] <- lmResid(formula = formula, data = data[selectedRows,], intercept = intercept)
+            ##
+            groupResidVec[selectedRows] <- lmResid(
+                formula   = formula,
+                data      = data[selectedRows,],
+                intercept = intercept
+            )
         } else {
-            groupResidVec[selectedRows] <- lmResid(x = X[selectedRows,], y = y[selectedRows], intercept = intercept, bare = TRUE)
+            ##
+            groupResidVec[selectedRows] <- lmResid(
+                x         = X[selectedRows,],
+                y         = y[selectedRows],
+                intercept = intercept,
+                bare      = TRUE
+            )
         }
     }
     return(groupResidVec)

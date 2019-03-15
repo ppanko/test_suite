@@ -104,24 +104,23 @@ checkBackEnd <- function() {
         {
             expect_equal(
                 as.matrix(lmResid(x = X, y = y, bare = TRUE)),
-                get_residuals(X = X, y = y, intercept = 0)
+                get_residuals(X = X, y = y, intercept = 0, GroupVec = FALSE)
             )
             expect_equal(
                 as.matrix(lmResid(x = X, y = y, intercept = trueIntercept, bare = TRUE)),
-                get_residuals(X = X, y = y, intercept = 1)
+                get_residuals(X = X, y = y, intercept = 1, GroupVec = FALSE)
             )
             expect_equal(
                 as.matrix(lmGroupResid(x = X, y = y, group = trueGroupVec, bare = TRUE)),
-                get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 0)
+                get_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 0)
             )
             expect_equal(
                 as.matrix(lmGroupResid(x = X, y = y, group = trueGroupVec, intercept = trueIntercept, bare = TRUE)),
-                get_group_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 1)
+                get_residuals(X = X, y = y, GroupVec = as.integer(trueGroupVec), intercept = 1)
             )
         }
     )
 }
-
 
 ##
 sanityCheck <- function() {

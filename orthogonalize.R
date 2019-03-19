@@ -668,16 +668,6 @@ checkMultivariateClasses <- function() {
 }
 
 ##
-checkUnload <- function() {
-  test_that(
-    expect_that(
-      unloadPrintDll(),
-      is_a("NULL")
-    )
-  )
-}
-
-
 lmMultiFront_ <- function(formula, data, intercept = 0, group = "", simplify = FALSE) {
   ##
   operations <- length(formula)
@@ -808,13 +798,6 @@ lm_ <- function(..., intercept = FALSE, simplify = FALSE) {
     y <- y[subset]
   }
   lm.fit(x, y)
-}
-
-unloadPrintDll <- function() {
-  detach("package:orthogonalize", unload = TRUE)
-  out <- getLoadedDLLs()$orthogonalize
-  library(orthogonalize)
-  out
 }
 
 ## 

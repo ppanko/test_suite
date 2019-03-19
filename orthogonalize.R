@@ -812,7 +812,9 @@ lm_ <- function(..., intercept = FALSE, simplify = FALSE) {
 
 unloadPrintDll <- function() {
   detach("package:orthogonalize", unload = TRUE)
-  getLoadedDLLs()$orthogonalize
+  out <- getLoadedDLLs()$orthogonalize
+  library(orthogonalize)
+  out
 }
 
 ## 
